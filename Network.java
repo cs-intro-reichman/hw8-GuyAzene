@@ -58,12 +58,18 @@ public class Network {
      *  If any of the two names is not a user in this network,
      *  or if the "follows" addition failed for some reason, returns false. */
     public boolean addFollowee(String name1, String name2) {
-        //// Replace the following statement with your code
-        if (this.getUser(name1) == null || this.getUser(name2) == null) {
+        User user1 = this.getUser(name1);
+        User user2 = this.getUser(name2);
+
+        if (user1 == null || user2 == null) {
             return false;
         }
-        this.getUser(name1).addFollowee(name2);
-        return true;
+
+        if (name1.equals(name2) || user1.follows(name2)) {
+            return false;
+        }
+
+        return user1.addFollowee(name2);
     }
     
     /** For the user with the given name, recommends another user to follow. The recommended user is
@@ -117,6 +123,6 @@ public class Network {
          for (int i = 0; i < this.userCount; i++) {
               s += this.users[i] + "\n";
          }
-       return s;
+       return s.substring(0, s.length() - 1);
     }
 }
