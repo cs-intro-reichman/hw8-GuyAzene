@@ -1,3 +1,5 @@
+import java.util.Locale;
+
 /**
  * Represents a user in a social network. A user is characterized by a name,
  * a list of user names that s/he follows, and the list's size.
@@ -59,7 +61,7 @@ public class User {
     public boolean follows(String name) {
         //// Replace the following statement with your code
         for (int i = 0; i < this.fCount; i++) {
-            if (this.follows[i].equals(name)) {
+            if (this.follows[i].equalsIgnoreCase(name)) {
                 return true;
             }
         }
@@ -103,6 +105,7 @@ public class User {
                 found = true;
             }
         }
+        this.fCount--;
         return found;
     }
 
