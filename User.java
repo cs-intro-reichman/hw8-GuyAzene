@@ -61,7 +61,7 @@ public class User {
     public boolean follows(String name) {
         //// Replace the following statement with your code
         for (int i = 0; i < this.fCount; i++) {
-            if (this.follows[i].equalsIgnoreCase(name)) {
+            if (name.equalsIgnoreCase(this.follows[i])) {
                 return true;
             }
         }
@@ -74,14 +74,11 @@ public class User {
      */
     public boolean addFollowee(String name) {
         //// Replace the following statement with your code
-        if (this.fCount == maxfCount) {
-            return false;
-        }
-        if (this.follows(name)) {
+        if (this.fCount == this.follows.length || this.follows(name)) {
             return false;
         }
         this.follows[this.fCount++] = name;
-        return false;
+        return true;
     }
 
     /**

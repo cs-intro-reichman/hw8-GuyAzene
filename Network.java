@@ -29,14 +29,14 @@ public class Network {
      *  If there is no such user, returns null.
      *  Notice that the method receives a String, and returns a User object. */
     public User getUser(String name) {
-        //// Replace the following statement with your code
         for (int i = 0; i < this.userCount; i++) {
-            if (this.users[i].getName().equals(name)) {
+            if (name.equalsIgnoreCase(this.users[i].getName())) {
                 return this.users[i];
             }
         }
         return null;
     }
+
 
     /** Adds a new user with the given name to this network.
     *  If ths network is full, does nothing and returns false;
@@ -44,12 +44,10 @@ public class Network {
     *  Otherwise, creates a new user with the given name, adds the user to this network, and returns true. */
     public boolean addUser(String name) {
         //// Replace the following statement with your code
-        if (this.userCount == this.users.length) {
+        if (this.userCount == this.users.length || this.getUser(name) != null) {
             return false;
         }
-        if (this.getUser(name) != null) {
-            return false;
-        }
+
         this.users[this.userCount++] = new User(name);
         return true;
     }
@@ -58,16 +56,17 @@ public class Network {
      *  If any of the two names is not a user in this network,
      *  or if the "follows" addition failed for some reason, returns false. */
     public boolean addFollowee(String name1, String name2) {
+        if (name1 == null || name2 == null) {
+            return false;
+        }
+
         User user1 = this.getUser(name1);
         User user2 = this.getUser(name2);
 
-        if (user1 == null || user2 == null) {
+        if (user1 == null || user2 == null || name1.equalsIgnoreCase(name2) || user1.follows(name2)) {
             return false;
         }
 
-        if (name1.equals(name2) || user1.follows(name2)) {
-            return false;
-        }
 
         return user1.addFollowee(name2);
     }
@@ -76,32 +75,37 @@ public class Network {
      *  the user that has the maximal mutual number of followees as the user with the given name. */
     public String recommendWhoToFollow(String name) {
         //// Replace the following statement with your code
-        String mostRecommendedUserToFollow = null;
-        int max = 0;
+        User user = this.getUser(name);
+        User maxUser = null;
+        int maxMutual = -1;
         for (int i = 0; i < this.userCount; i++) {
-            if (this.users[i].getName().equals(name)) {
+            if (this.users[i].getName().equalsIgnoreCase(user.getName())) {
                 continue;
             }
-            int mutual = this.users[i].countMutual(this.getUser(name));
-            if (mutual > max) {
-                max = mutual;
-                mostRecommendedUserToFollow = this.users[i].getName();
+            int currMutual = user.countMutual(this.users[i]);
+            if (currMutual > maxMutual) {
+                maxUser = this.users[i];
+                maxMutual = currMutual;
             }
         }
-        return mostRecommendedUserToFollow;
+        return maxUser.getName();
     }
-
     /** Computes and returns the name of the most popular user in this network: 
      *  The user who appears the most in the follow lists of all the users. */
     public String mostPopularUser() {
-        //// Replace the following statement with your code
-        int max = 0;
+        User mostPopularUser = null;
+        int maxCount = -1;
         for (int i = 0; i < this.userCount; i++) {
-            if (this.followeeCount(this.users[i].getName()) >= max) {
-                max = i;
+            int count = followeeCount(this.users[i].getName());
+            if (count > maxCount) {
+                mostPopularUser = this.users[i];
+                maxCount = count;
             }
         }
-        return this.users[max].getName();
+        if (mostPopularUser == null) {
+            return null;
+        }
+        return mostPopularUser.getName();
     }
 
     /** Returns the number of times that the given name appears in the follows lists of all
@@ -110,7 +114,7 @@ public class Network {
         //// Replace the following statement with your code
         int count = 0;
         for (int i = 0; i < this.userCount; i++) {
-            if (this.users[i].follows(name)) {
+            if (users[i].follows(name)) {
                 count++;
             }
         }
